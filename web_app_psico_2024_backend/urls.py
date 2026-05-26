@@ -31,6 +31,8 @@ urlpatterns = [
     path('api/v1/appointment/', include('appointments.urls')),
     path('api/v1/activity/', include('activity.urls')),
     path('api/v1/goal/', include('goals.urls')),
+    # ruta base de la app goals, conecta todas las URLs de metas
+    # si se elimina la app goals, esta linea debe eliminarse
 
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/v1/docs/',

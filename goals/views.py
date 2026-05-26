@@ -15,30 +15,47 @@ from io import BytesIO
 from django.shortcuts import HttpResponse
 
 class GoalCreateApiView(ListCreateAPIView):
+    # Vista para listar y crear metas
     queryset = Goal.objects.all()
+    # aqui trae todas las metas creadas
     serializer_class = GoalSerializer
+    # aqui se convierte la informacion de la meta a Json
     permission_classes = [IsAuthenticated]
+    # aqui se autentica paraokay ahora revisa que solo usuarios registrados puedan acceder
 
 class GoalRetrieveApiView(RetrieveUpdateAPIView):
+    # Vista para obtener y actualizar una meta especifica por su id
     queryset = Goal.objects.all()
+    # aqui trae todas las metas para buscar la que se necesita
 
     def get_serializer_class(self):
+        # aqui se decide que serializer usar segun el tipo de peticion
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return GoalSerializer
+            # si es una actualizacion se usa el serializer de escritura
         return GoalSerializer
+        # si es una lectura se usa el mismo serializer
     permission_classes = [IsAuthenticated]
-    
+    # aqui se autentica para que solo usuarios registrados puedan acceder
+
 class GoalMetricsApiView(ListAPIView):
-    
+    # Vista para calcular y devolver las metricas de la meta activa
+
     def get(self, request, format=None):
+        # aqui se maneja la peticion GET para obtener las metricas
 
         try:
             set_goal = Goal.objects.get(start_time__lte = now().date(), end_time__gte = now().date())
+            # aqui se busca la meta activa segun la fecha actual
             goal_appointments = Appointment.objects.filter(goal=set_goal.pk)
+            # aqui se filtran las citas que pertenecen a la meta activa
             goal_metric = GoalMetrics(appointments = goal_appointments.count(), monthly_goal_porcentage = goal_appointments.count()/set_goal.apponitments_goal, assistance =goal_appointments.filter(status="DONE").count(), totalAppointments = set_goal.apponitments_goal)
+            # aqui se calcula el total de citas, el porcentaje de avance y la asistencia
             goal_metric_serialied = GoalMetricsSerializer(goal_metric)
+            # aqui se convierte el resultado a Json
             return Response(goal_metric_serialied.data)
         except exceptions.ObjectDoesNotExist:
+            # excepto cuando no hay una meta activa devuelve el mensaje y error 404
             return Response(
                 {'message': 'No set goal'},
                 status=HTTP_404_NOT_FOUND
