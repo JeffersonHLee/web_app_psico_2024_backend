@@ -55,9 +55,6 @@ INSTALLED_APPS = [
     'patient.apps.PatientConfig',
     'appointments.apps.AppointmentsConfig',
     'activity.apps.ActivityConfig',
-    'goals.apps.GoalsConfig',
-    # registra la app goals en el proyecto Django
-    # si se elimina la app goals, esta linea debe eliminarse
 
     'django.contrib.sites',
     'allauth',

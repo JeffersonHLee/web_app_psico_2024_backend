@@ -48,19 +48,6 @@ class Appointment(models.Model):
     )
     hour = models.TimeField()
     date = models.DateField()
-    # campo que conecta cada cita con la meta activa al momento de crearla
-    # este campo es el enlace principal entre appointments y goals
-    # si se elimina la app goals, este campo debe eliminarse del modelo
-    goal = models.ForeignKey(
-        'goals.Goal',
-        # apunta al modelo Goal de la app goals
-        on_delete=models.PROTECT,
-        # PROTECT evita eliminar una meta si tiene citas asociadas
-        related_name='goal',
-        blank=True,
-        null=True,
-        # es opcional: una cita puede existir sin meta asignada
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
